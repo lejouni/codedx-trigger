@@ -1,0 +1,56 @@
+name: "Code Dx trigger"
+description: "Will trigger the given native collector from Code Dx or send given report file to Code DX via API."
+author: Jouni Lehto
+branding:
+  icon: code
+  color: blue
+inputs:
+  log_level:
+    description: Set the logging level
+    required: false
+    default: INFO
+  project:
+    description: Project name in Code Dx
+    required: false
+    default: ${{github.repository}}
+  tag:
+    description: Project tag which is used to find the project from Code Dx.
+    required: false
+  collector_type_to_trigger:
+    description: Collector type to trigger. Options are "ASoC","AppScan Enterprise","Aqua CSP","Black Duck Binary Analysis","Black Duck Hub","Burp Enterprise","Checkmarx","Checkmarx IAST","CodeSonar","Contrast","Coverity","Data Theorem Mobile","DefenseCode ThunderScan","Dependency-Track","Fortify Software Security Center","GitHub Advanced Security","JFrog Xray","Netsparker Enterprise","NowSecure","Polaris","Prisma Cloud (RedLock)","Prisma Cloud Compute (Twistlock)","Qualys VM","Qualys WAS","Rapid7 InsightAppSec","SD Elements","Seeker","Snyk","SonarQube","Sonatype Nexus","Synopsys Managed Services Platform","Tenable.io","Tenable.io Web App Scanning","Tenable.sc","Tinfoil API","Tinfoil Web","Trustwave App Scanner","Veracode","WhiteHat Sentinel","WhiteSource"
+    required: true
+  collector_name:
+    description: Name of the collector. This can be used to separate which collector to trigger, if there are multiple same type of collectors in the project.
+    required: false
+  input_filename:
+    description: File name which to send into Code Dx
+    required: false
+  artifact_name:
+    description: Artifact name where report file can be downloaded
+    required: false
+  wait_analysis:
+    description: Wait the analysis is ready.
+    required: false
+    default: false
+  create_project_if_not_exists:
+    description: Create project into Code Dx, if its not exists yet.
+    required: false
+    default: false
+  codedx_access_token:
+    description: Code Dx Api access token.
+    required: true
+  codedx_url:
+    description: Code Dx server url.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    # First step is to install needed Python modules
+    - run: |
+        pip3 install requests polling
+      shell: bash
+    # Second step is to run the Python script
+    - run: |
+        python3 ${{github.action_path}}/codedxUtility.py --create_project_if_not_exists="${{inputs.create_project_if_not_exists}}" --repository="${{inputs.project}}" --url="${{inputs.codedx_url}}" --apikey="${{inputs.codedx_access_token}}" --collector_type="${{inputs.collector_type_to_trigger}}" --collector_name="${{inputs.collector_name}}" --filename="${{inputs.input_filename}}" --wait_analysis="${{inputs.wait_analysis}}" --tag="${{inputs.tag}}" --log_level="${{inputs.log_level}}
+      shell: bash
