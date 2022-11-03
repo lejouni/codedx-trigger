@@ -274,7 +274,7 @@ if __name__ == '__main__':
         if project_id:
             if not args.filename:
                 collectors = getProjectCollectorIDs(project_id, args.collector_type.split(','))
-                if collectors or len(collectors) == 0 and args.create_if_not_exists:
+                if not collectors or len(collectors) == 0 and args.create_if_not_exists:
                     # There was no requested collector -> create one
                     addCollector(project_id, args.collector_type.split(','))
                     collectors = getProjectCollectorIDs(project_id, args.collector_type.split(','))
