@@ -90,7 +90,7 @@ def getProjectCollectorIDs(project_id, collector_types):
         for data in response.json():
             if args.collector_type == "ALL":
                 collectorIds.append({"name": data["name"], "id": data["id"]})
-            elif data["tool"].lower() in collector_types.lower():
+            elif data["tool"] in collector_types:
                 if args.collector_name:
                     if args.collector_name.lower() == data["name"].lower():
                         collectorIds.append({"name": data["name"], "id": data["id"]})
@@ -208,7 +208,7 @@ def getBDProjectIDByName(project_name):
 # Only Coverity, Black Duck Hub and Polaris types are supported
 #
 def addCollector(project_id, collector_types):
-    if collector_types and not collector_types == 'ALL':
+    if collector_types:
         for collector_type in collector_types:
             if collector_type.lower() == 'coverity':
                 if args.collector_username and args.collector_password and args.collector_url:
