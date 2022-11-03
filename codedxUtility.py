@@ -136,7 +136,7 @@ def addCoverityCollector(project_id, project_name, branch_name):
     global args
     if project_id:
         codedx_data = { "tool": "Coverity", "name": "Coverity Connector" }
-        response = requests.post(args.url + "/api/tool-connector-config/entries/" + str(project_id), headers=getHeader(), json=codedx_data)
+        response = requests.post(args.url + "/codedx/api/tool-connector-config/entries/" + str(project_id), headers=getHeader(), json=codedx_data)
         logging.info(response)
         if response.status_code == 201:
             collector_id = response.json()['id']
@@ -144,7 +144,7 @@ def addCoverityCollector(project_id, project_name, branch_name):
                 codedx_data = { "server_url": args.collector_url, "username": args.collector_username, "password": args.collector_password \
                     , "selected_project": project_name, "selected_stream": branch_name \
                     , "ingest_all_components": False, "available-during-analysis": True}
-                response = requests.put(args.url + "/api/tool-connector-config/values/" + str(collector_id), headers=getHeader(), json=codedx_data)
+                response = requests.put(args.url + "/codedx/api/tool-connector-config/values/" + str(collector_id), headers=getHeader(), json=codedx_data)
                 logging.info(response)
                 if response.status_code == 200:
                     logging.info("Project: " + project_name + " Coverity Collector added!")
@@ -156,7 +156,7 @@ def addBlackDuckCollector(project_id, project_name):
     global args
     if project_id:
         codedx_data = { "tool": "Black Duck Hub", "name": "Black Duck Connector" }
-        response = requests.post(args.url + "/api/tool-connector-config/entries/" + str(project_id), headers=getHeader(), json=codedx_data)
+        response = requests.post(args.url + "/codedx/api/tool-connector-config/entries/" + str(project_id), headers=getHeader(), json=codedx_data)
         if response.status_code == 201:
             collector_id = response.json()['id']
             if collector_id:
@@ -165,7 +165,7 @@ def addBlackDuckCollector(project_id, project_name):
                     , "bom_custom_fields": False, "omp_custom_fields": False, "comp_ver_custom_fields": False, "license_risks": True \
                     , "matched_files": True, "operational_risks": False, "security_risks": True, "upgrade_guidance": True \
                     , "minimum_severity": "medium", "available-during-analysis": True }
-                response = requests.put(args.url + "/api/tool-connector-config/values/" + str(collector_id), headers=getHeader(), json=codedx_data)
+                response = requests.put(args.url + "/codedx/api/tool-connector-config/values/" + str(collector_id), headers=getHeader(), json=codedx_data)
                 if response.status_code == 200:
                     logging.info("Project: " + project_name + " BD Collector added!")
                 else:
@@ -176,7 +176,7 @@ def addPolarisCollector(project_id, project_name, branch_name):
     global args
     if project_id:
         codedx_data = { "tool": "Polaris", "name": "Polaris Connector" }
-        response = requests.post(args.url + "/api/tool-connector-config/entries/" + str(project_id), headers=getHeader(), json=codedx_data)
+        response = requests.post(args.url + "/codedx/api/tool-connector-config/entries/" + str(project_id), headers=getHeader(), json=codedx_data)
         if response.status_code == 201:
             collector_id = response.json()['id']
             if collector_id:
@@ -192,7 +192,7 @@ def addPolarisCollector(project_id, project_name, branch_name):
                         "branch": f'{polaris_streamId if polaris_streamId else "cdx_default_branch"}',
                         "available-during-analysis": True
                     }
-                    response = requests.put(args.url + "/api/tool-connector-config/values/" + str(collector_id), headers=getHeader(), json=codedx_data)
+                    response = requests.put(args.url + "/codedx/api/tool-connector-config/values/" + str(collector_id), headers=getHeader(), json=codedx_data)
                     if response.status_code == 200:
                         logging.info("Project: " + project_name + " Polaris Collector added!")
                     else:
