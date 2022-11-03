@@ -137,7 +137,6 @@ def addCoverityCollector(project_id, project_name, branch_name):
     if project_id:
         codedx_data = { "tool": "Coverity", "name": "Coverity Connector" }
         response = requests.post(args.url + "/codedx/api/tool-connector-config/entries/" + str(project_id), headers=getHeader(), json=codedx_data)
-        logging.info(response)
         if response.status_code == 201:
             collector_id = response.json()['id']
             if collector_id:
@@ -145,7 +144,6 @@ def addCoverityCollector(project_id, project_name, branch_name):
                     , "selected_project": project_name, "selected_stream": branch_name \
                     , "ingest_all_components": False, "available-during-analysis": True}
                 response = requests.put(args.url + "/codedx/api/tool-connector-config/values/" + str(collector_id), headers=getHeader(), json=codedx_data)
-                logging.info(response)
                 if response.status_code == 200:
                     logging.info("Project: " + project_name + " Coverity Collector added!")
                 else:
