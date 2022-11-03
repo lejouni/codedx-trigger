@@ -212,13 +212,22 @@ def addCollector(project_id, collector_types):
     if collector_types and not collector_types == 'ALL':
         for collector_type in collector_types:
             if collector_type.lower() == 'coverity':
-                addCoverityCollector(project_id, args.project, args.branch)
+                if args.collector_username and args.collector_password and args.collector_url:
+                    addCoverityCollector(project_id, args.project, args.branch)
+                else:
+                   logging.info("Missing: collector_username or collector_password or args.collector_url -> Coverity Collector cannot be created!") 
             elif collector_type.lower() == 'polaris':
-                addPolarisCollector(project_id, args.project, args.branch)
+                if args.collector_apikey and args.collector_url:
+                    addPolarisCollector(project_id, args.project, args.branch)
+                else:
+                   logging.info("Missing: collector_apikey or args.collector_url -> Polaris Collector cannot be created!") 
             elif collector_type.lower() == 'black duck hub':
-                addBlackDuckCollector(project_id, args.project, args.branch)
-            else:
-                logging.info(f"Creation of the collector type {collector_type} is not supported. Only supporter types are: Coverity, Black Duck Hub and Polaris")
+                if args.collector_apikey and args.collector_url:
+                    addBlackDuckCollector(project_id, args.project, args.branch)
+                else:
+                   logging.info("Missing: collector_apikey or args.collector_url -> Black Duck Hub Collector cannot be created!") 
+    else:
+        logging.info(f"Creation of the collector type {collector_type} is not supported. Only supporter types are: Coverity, Black Duck Hub and Polaris")
         
 def str2bool(v):
   return v.lower() in ("yes", "true", "t", "1")
