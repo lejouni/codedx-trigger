@@ -276,6 +276,7 @@ if __name__ == '__main__':
                 if collectors and len(collectors) == 0 and args.create_if_not_exists:
                     # There was no requested collector -> create one
                     addCollector(project_id, args.collector_type.split(','))
+                    collectors = getProjectCollectorIDs(project_id, args.collector_type.split(','))
                 if collectors and len(collectors) > 0:
                     for collector in collectors:
                         job_id = triggerCollectors(project_id, collector)
