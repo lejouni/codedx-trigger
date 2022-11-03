@@ -225,8 +225,8 @@ def addCollector(project_id, collector_types):
                     addBlackDuckCollector(project_id, args.project, args.branch)
                 else:
                    logging.info("Missing: collector_apikey or args.collector_url -> Black Duck Hub Collector cannot be created!") 
-    else:
-        logging.info(f"Creation of the collector type {collector_type} is not supported. Only supporter types are: Coverity, Black Duck Hub and Polaris")
+            else:
+                logging.info(f"Creation of the collector type {collector_type} is not supported. Only supporter types are: Coverity, Black Duck Hub and Polaris")
         
 def str2bool(v):
   return v.lower() in ("yes", "true", "t", "1")
@@ -283,6 +283,7 @@ if __name__ == '__main__':
             if not args.filename:
                 collectors = getProjectCollectorIDs(project_id, args.collector_type.split(','))
                 if not collectors and args.create_if_not_exists:
+                    logging.debug("Trying to add collector...")
                     # There was no requested collector -> create one
                     addCollector(project_id, args.collector_type.split(','))
                     collectors = getProjectCollectorIDs(project_id, args.collector_type.split(','))
