@@ -50,6 +50,12 @@ inputs:
   collector_url:
     description: Url where collector is integrated with
     required: false
+  collector_username:
+    description: Username for collector which is integrated
+    required: false
+  collector_password:
+    description: password for collector which is integrated
+    required: false
   collector_apikey:
     description: Api key for collector integration
     required: false
@@ -68,5 +74,5 @@ runs:
         path: ${{github.workspace}}
     # Second step is to run the Python script
     - run: |
-        python3 ${{github.action_path}}/codedxUtility.py --branch=${{inputs.branch}} --collector_url=${{inputs.collector_url}} --collector_apikey=${{inputs.collector_apikey}} --create_if_not_exists="${{inputs.create_if_not_exists}}" --project="${{inputs.project}}" --url="${{inputs.codedx_url}}" --apikey="${{inputs.codedx_access_token}}" --collector_type="${{inputs.collector_type_to_trigger}}" --collector_name="${{inputs.collector_name}}" --filename="${{inputs.input_filename}}" --wait_analysis="${{inputs.wait_analysis}}" --tag="${{inputs.tag}}" --log_level="${{inputs.log_level}}"
+        python3 ${{github.action_path}}/codedxUtility.py --branch=${{inputs.branch}} --collector_username=${{inputs.collector_username}} --collector_password=${{inputs.collector_password}} --collector_url=${{inputs.collector_url}} --collector_apikey=${{inputs.collector_apikey}} --create_if_not_exists="${{inputs.create_if_not_exists}}" --project="${{inputs.project}}" --url="${{inputs.codedx_url}}" --apikey="${{inputs.codedx_access_token}}" --collector_type="${{inputs.collector_type_to_trigger}}" --collector_name="${{inputs.collector_name}}" --filename="${{inputs.input_filename}}" --wait_analysis="${{inputs.wait_analysis}}" --tag="${{inputs.tag}}" --log_level="${{inputs.log_level}}"
       shell: bash

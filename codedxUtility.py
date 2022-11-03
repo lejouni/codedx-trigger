@@ -140,7 +140,7 @@ def addCoverityCollector(project_id, project_name, branch_name):
         if response.status_code == 201:
             collector_id = response.json()['id']
             if collector_id:
-                codedx_data = { "server_url": args.collector_url, "username": args.username, "password": args.password \
+                codedx_data = { "server_url": args.collector_url, "username": args.collector_username, "password": args.collector_password \
                     , "selected_project": project_name, "selected_stream": branch_name \
                     , "ingest_all_components": False, "available-during-analysis": True, "component": [args.application + ".Other"]}
                 response = requests.put(args.url + "/api/tool-connector-config/values/" + str(collector_id), headers=getHeader(), json=codedx_data)
@@ -198,7 +198,7 @@ def addPolarisCollector(project_id, project_name, branch_name):
                         logging.error("Project: " + project_name + " Polaris Collector adding failed!")
 
 def getBDProjectIDByName(project_name):
-    hub = HubInstance(args.collector_url, args.username, args.password, insecure=True)
+    hub = HubInstance(args.collector_url, api_token=args.collector_apikey, insecure=False)
     project = hub.get_project_by_name(project_name)
     if project:
         logging.debug(project['_meta']['href'].split("/")[-1])
@@ -242,8 +242,8 @@ if __name__ == '__main__':
     parser.add_argument("--filename", help="XML filename with full path", default="")
     parser.add_argument("--tag", help="Tag which is used to find the project from CVMS, default=\"integration_name\"", default="integration_name", required=False)
     parser.add_argument("--create_if_not_exists", help="Set this True, if you need to create the project.", default=False, required=False, type=str2bool)
-    parser.add_argument("--username", help="Username for collector integration", required=False)
-    parser.add_argument("--password", help="Password for collector integration", required=False)
+    parser.add_argument("--collector_username", help="Username for collector integration", required=False)
+    parser.add_argument("--collector_password", help="Password for collector integration", required=False)
     parser.add_argument("--collector_url", help="Url for collector integration", required=False)
     parser.add_argument("--collector_apikey", help="Url for collector integration", required=False)
     parser.add_argument('--log_level', help="Will print more info... default=INFO", default="DEBUG")
@@ -258,7 +258,7 @@ if __name__ == '__main__':
     if (logging.getLogger().isEnabledFor(logging.DEBUG)):
         logging.debug("All settings used:")
         for k, v in sorted(vars(args).items()):
-            if (k != "apikey" and k != 'password' and k != 'username'):
+            if (k != "apikey" and k != 'collector_password' and k != 'collector_username'):
                 logging.debug("{0}: {1}".format(k, v))
     try:
         project_id = getProjectIdByName()
