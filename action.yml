@@ -1,3 +1,4 @@
+#TODO:  - add also collector creation if project not exists yet.
 name: "Code Dx trigger"
 description: "Will trigger the given native collector from Code Dx or send given report file to Code DX via API."
 author: Jouni Lehto
@@ -13,6 +14,10 @@ inputs:
     description: Project name in Code Dx
     required: false
     default: ${{github.repository}}
+  branch:
+    description: Project branch name
+    required: false
+    default: ${{github.ref_name}}
   tag:
     description: Project tag which is used to find the project from Code Dx.
     required: false
@@ -42,15 +47,26 @@ inputs:
   codedx_url:
     description: Code Dx server url.
     required: true
+  collector_url:
+    description: Url where collector is integrated with
+    required: false
+  collector_apikey:
+    description: Api key for collector integration
+    required: false
 
 runs:
   using: composite
   steps:
     # First step is to install needed Python modules
     - run: |
-        pip3 install requests polling
+        pip3 install requests polling blackduck
       shell: bash
+    - if: ${{inputs.artifact_name != ''}}
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{inputs.artifact_name}}
+        path: ${{github.workspace}}
     # Second step is to run the Python script
     - run: |
-        python3 ${{github.action_path}}/codedxUtility.py --create_project_if_not_exists="${{inputs.create_if_not_exists}}" --repository="${{inputs.project}}" --url="${{inputs.codedx_url}}" --apikey="${{inputs.codedx_access_token}}" --collector_type="${{inputs.collector_type_to_trigger}}" --collector_name="${{inputs.collector_name}}" --filename="${{inputs.input_filename}}" --wait_analysis="${{inputs.wait_analysis}}" --tag="${{inputs.tag}}" --log_level="${{inputs.log_level}}"
+        python3 ${{github.action_path}}/codedxUtility.py --branch=${{inputs.branch}} --collector_url=${{inputs.collector_url}} --collector_apikey=${{inputs.collector_apikey}} --create_if_not_exists="${{inputs.create_if_not_exists}}" --repository="${{inputs.project}}" --url="${{inputs.codedx_url}}" --apikey="${{inputs.codedx_access_token}}" --collector_type="${{inputs.collector_type_to_trigger}}" --collector_name="${{inputs.collector_name}}" --filename="${{inputs.input_filename}}" --wait_analysis="${{inputs.wait_analysis}}" --tag="${{inputs.tag}}" --log_level="${{inputs.log_level}}"
       shell: bash
