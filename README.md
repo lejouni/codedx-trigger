@@ -26,24 +26,46 @@ Supported collector types for triggering: "ASoC","AppScan Enterprise","Aqua CSP"
 | collector_apikey | Api key for collector integration (Black Duck Hub and Polaris) | - | false |
 
 ## Usage examples
-Trigger Coverity Connect collector
+Trigger Coverity Connect -collector
 ```yaml
     - name: Trigger Code Dx
       uses: lejouni/codedx-trigger@v0.1.13
       with:
-        project: ${{github.repository}}
+        project: test-project
         collector_type_to_trigger: Coverity
         wait_analysis: false
         codedx_access_token: ${{secrets.CODEDX_ACCESS_TOKEN}}
         codedx_url: ${{secrets.CODEDX_SERVER_URL}}
 ```
-Trigger Coverity Connect collector and create project and collector if they don't exists yet.
+Trigger Black Duck Hub -collector
 ```yaml
     - name: Trigger Code Dx
       uses: lejouni/codedx-trigger@v0.1.13
       with:
-        project: ${{env.project}}
-        branch: ${{env.stream}}
+        project: test-project
+        collector_type_to_trigger: Black Duck Hub
+        wait_analysis: false
+        codedx_access_token: ${{secrets.CODEDX_ACCESS_TOKEN}}
+        codedx_url: ${{secrets.CODEDX_SERVER_URL}}
+```
+Trigger All -collectors what project has.
+```yaml
+    - name: Trigger Code Dx
+      uses: lejouni/codedx-trigger@v0.1.13
+      with:
+        project: test-project
+        collector_type_to_trigger: ALL
+        wait_analysis: false
+        codedx_access_token: ${{secrets.CODEDX_ACCESS_TOKEN}}
+        codedx_url: ${{secrets.CODEDX_SERVER_URL}}
+```
+Trigger Coverity Connect -collector and create project and collector if they don't exists yet.
+```yaml
+    - name: Trigger Code Dx
+      uses: lejouni/codedx-trigger@v0.1.13
+      with:
+        project: test-project
+        branch: test-project-main
         collector_type_to_trigger: Coverity
         create_if_not_exists: true
         wait_analysis: false
@@ -54,6 +76,20 @@ Trigger Coverity Connect collector and create project and collector if they don'
         collector_username: ${{secrets.COVERITY_USERNAME}}
         collector_password: ${{secrets.COVERITY_ACCESS_TOKEN}}
 ```
+Send result file into Code Dx for vulnerability management. The file, which you want to send Code Dx must be first saved as an artifact, then you need to give that artifact name and filename to this action as a parameter.
+```yaml
+    - name: Trigger Code Dx
+      uses: lejouni/codedx-trigger@v0.1.13
+      with:
+        artifact_name: checkov-scan-results
+        input_filename: results.sarif
+        create_project_if_not_exists: true
+        collector_type_to_trigger: Checkov
+        wait_analysis: true
+        codedx_access_token: ${{secrets.CODEDX_ACCESS_TOKEN}}
+        codedx_url: ${{secrets.CODEDX_SERVER_URL}}
+```
+
 Example to run Coverity analysis and after analysis trigger the Code Dx to collect the latest results from Coverity Connect. In this example, we are only interested to collect **full** analysis results into Code Dx and results from incremental analysis are available only locally.
 ```yaml
 name: Java CI with Maven and Coverity
